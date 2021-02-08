@@ -4,15 +4,39 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private Rigidbody rb;
+
+    [SerializeField] private float jumpForce;
+    [SerializeField] private float gravityModifier;
+
+    private bool isOnGround;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+        Physics.gravity *= gravityModifier;
+    }
+
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (isOnGround && Input.GetButtonDown("Jump"))
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+            isOnGround = true;
+    }
+    
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+            isOnGround = false;
     }
 }
