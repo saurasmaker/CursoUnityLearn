@@ -12,6 +12,7 @@ public class PlayerControllerX : MonoBehaviour
     public GameObject powerupIndicator;
     public int powerUpDuration = 5;
 
+    private float impulseStrength = 10;
     private float normalStrength = 10; // how hard to hit enemy without powerup
     private float powerupStrength = 25; // how hard to hit enemy with powerup
     
@@ -19,6 +20,7 @@ public class PlayerControllerX : MonoBehaviour
     {
         playerRb = GetComponent<Rigidbody>();
         focalPoint = GameObject.Find("Focal Point");
+        GetComponent<ParticleSystem>().Pause();
     }
 
     void Update()
@@ -30,6 +32,12 @@ public class PlayerControllerX : MonoBehaviour
         // Set powerup indicator position to beneath player
         powerupIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
 
+        if (Input.GetButtonDown("Jump"))
+        {
+            playerRb.AddForce(playerRb.velocity.normalized * impulseStrength, ForceMode.Impulse);
+            GetComponent<ParticleSystem>().Pause();
+            Invoke("PauseParticles", 1f);
+        }
     }
 
     // If Player collides with powerup, activate powerup
@@ -40,6 +48,7 @@ public class PlayerControllerX : MonoBehaviour
             Destroy(other.gameObject);
             hasPowerup = true;
             powerupIndicator.SetActive(true);
+            StartCoroutine(PowerupCooldown());
         }
     }
 
@@ -57,7 +66,7 @@ public class PlayerControllerX : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             Rigidbody enemyRigidbody = other.gameObject.GetComponent<Rigidbody>();
-            Vector3 awayFromPlayer =  transform.position - other.gameObject.transform.position; 
+            Vector3 awayFromPlayer = other.gameObject.transform.position - transform.position ; 
            
             if (hasPowerup) // if have powerup hit enemy with powerup force
             {
@@ -67,11 +76,12 @@ public class PlayerControllerX : MonoBehaviour
             {
                 enemyRigidbody.AddForce(awayFromPlayer * normalStrength, ForceMode.Impulse);
             }
-
-
         }
     }
 
 
-
+    void PauseParticles()
+    {
+        GetComponent<ParticleSystem>().Pause();
+    }
 }
