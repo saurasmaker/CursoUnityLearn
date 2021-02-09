@@ -6,13 +6,17 @@ public class Enemy : MonoBehaviour
 {
 
     public float speed;
+    public Transform boundY;
 
     private Rigidbody rb;
     private GameObject player;
+    private SpawnManager sm;
 
     // Start is called before the first frame update
     void Start()
     {
+        boundY = GameObject.Find("DownBound").transform;
+        sm = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
         rb = GetComponent<Rigidbody>();
         player = GameObject.Find("Player");
     }
@@ -22,5 +26,13 @@ public class Enemy : MonoBehaviour
     {
         Vector3 lookDirection = (player.transform.position - transform.position).normalized;
         rb.AddForce(lookDirection * speed * Time.deltaTime);
+
+        if (transform.position.y < boundY.position.y)
+        {
+            --sm.currentEnemies;
+            Destroy(gameObject);
+        }
     }
+
+    
 }
