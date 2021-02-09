@@ -7,12 +7,17 @@ public class MoveLeft : MonoBehaviour
     public float speed;
     private Vector3 leftBound;
 
-    private PlayerController pc;
+    private PlayerControllerX pc;
+
+    private void Awake()
+    {
+        leftBound = GameObject.Find("LeftBound").transform.position;
+        pc = GameObject.Find("Player").GetComponent<PlayerControllerX>();
+    }
 
     void Start()
     {
-        leftBound = GameObject.Find("LeftBound").transform.position;
-        pc = GameObject.Find("Player").GetComponent<PlayerController>();
+        
     }
 
     void Update()
