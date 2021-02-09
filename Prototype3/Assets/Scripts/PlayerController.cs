@@ -12,7 +12,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private ParticleSystem dirtParticles;
     [SerializeField] private float jumpForce;
     [SerializeField] private float gravityModifier;
-    [SerializeField] private Transform bounds;
 
     public AudioClip jumpSound, crashSound;
 
@@ -34,9 +33,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (transform.position.y < bounds.position.y && !gameOver && isOnGround && Input.GetButtonDown("Jump"))
+        if (!gameOver && isOnGround && Input.GetButtonDown("Jump"))
         {
-            rb.velocity = Vector3.zero;
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             audioSource.PlayOneShot(jumpSound, 1.0f);
         }
