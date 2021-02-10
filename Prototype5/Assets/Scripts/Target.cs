@@ -54,7 +54,7 @@ public class Target : MonoBehaviour
             else if (CompareTag("GoodTarget3"))
                 gameManager.score += 3;
             else if (CompareTag("BadTarget"))
-                gameManager.score -= 5;
+                gameManager.GameOver();
 
             gameManager.UpdateScore();
         }
