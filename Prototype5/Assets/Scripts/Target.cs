@@ -5,10 +5,10 @@ using UnityEngine;
 public class Target : MonoBehaviour
 {
     private Rigidbody targetRb;
-    private float minSpeed = 12;
-    private float maxSpeed = 16;
+    private float minSpeed = 13;
+    private float maxSpeed = 17;
     private float maxTorque = 10;
-    private float xRange = 4;
+    private float xRange = 7;
     private float ySpawnPos = 0;
     private float zSpawnPos = -6;
 
@@ -29,17 +29,26 @@ public class Target : MonoBehaviour
         targetRb.AddTorque(RandomTorque(), RandomTorque(), RandomTorque(), ForceMode.Impulse);
 
         particleSystem.Pause();
+
+        gameManager.UpdateScore();
     }
 
     void Update()
     {
         if (transform.position.y < downBound.position.y)
+        {
             Destroy(gameObject);
+            if (!gameObject.CompareTag("BadTarget") && !gameManager.isGameOver && canClick)
+            {
+                gameManager.lifes--;
+                gameManager.UpdateScore();               
+            }
+        }
     }
 
     private void OnMouseDown()
     {
-        if (canClick)
+        if (canClick && !gameManager.isGameOver)
         {
             canClick = false;
             
@@ -54,7 +63,7 @@ public class Target : MonoBehaviour
             else if (CompareTag("GoodTarget3"))
                 gameManager.score += 3;
             else if (CompareTag("BadTarget"))
-                gameManager.GameOver();
+                gameManager.lifes -= 3;
 
             gameManager.UpdateScore();
         }
