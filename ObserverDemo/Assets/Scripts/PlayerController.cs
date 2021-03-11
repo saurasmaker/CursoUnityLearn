@@ -20,7 +20,6 @@ public class PlayerController : MonoBehaviour
     private WaitForSeconds shieldTimeOut;
 
     private GameSceneController gameSceneController;
-
     #endregion
 
     
@@ -31,8 +30,16 @@ public class PlayerController : MonoBehaviour
     {
         gameSceneController = FindObjectOfType<GameSceneController>();
         gameSceneController.ScoreUpdatedOnKill += GameSceneController_ScoreUpdatedOnKill;
+
+        EventBroker.ProjectileOutOfBounds += EnableProjectile;
+
         shieldTimeOut = new WaitForSeconds(shieldDuration);
         EnableShield();
+    }
+
+    private void OnDisable()
+    {
+        EventBroker.ProjectileOutOfBounds -= EnableProjectile;
     }
 
     private void GameSceneController_ScoreUpdatedOnKill(int pointValue)
@@ -103,8 +110,6 @@ public class PlayerController : MonoBehaviour
         projectile.projectileSpeed = 4;
         projectile.projectileDirection = Vector2.up;
 
-        projectile.ProjectileOutOfBounds += EnableProjectile;
-
         DisableProjectile();
     }
 
@@ -118,8 +123,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.GetComponent<ProjectileController>())
         {
-            if (HitByEnemy != null)
-                HitByEnemy();
+            
 
             TakeHit();
         }
@@ -129,6 +133,11 @@ public class PlayerController : MonoBehaviour
     {
         GameObject xp = Instantiate(expolsion, transform.position, Quaternion.identity);
         xp.transform.localScale = new Vector2(2, 2);
+
+        if (HitByEnemy != null)
+            HitByEnemy();
+
+        gameSceneController.ScoreUpdatedOnKill -= GameSceneController_ScoreUpdatedOnKill;
 
         Destroy(gameObject);
     }
